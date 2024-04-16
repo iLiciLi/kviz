@@ -23,6 +23,10 @@ def create_app(test_config=None):
         os.makedirs(app.instance_path)
     except OSError:
         pass
+    
+    @app.route('/')
+    def home():
+        return 'OVO JE <h1>POCETNA STRANICA</h1>'
 
     # a simple page that says hello
     @app.route('/hello')
