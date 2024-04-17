@@ -15,6 +15,7 @@ python -m virtualenv env<br />
 Set-ExecutionPolicy Unrestricted -Scope Process<br />
 .\env\Scripts\activate<br />
 **~unutar (env) kucate komandu :<br />**
+pip install flask<br />
 flask --app flaskr run --debug<br />
 <br />
 **{Ako imate virtualenv i flask, onda} :<br />**
@@ -22,4 +23,5 @@ python -m virtualenv env<br />
 Set-ExecutionPolicy Unrestricted -Scope Process<br />
 .\env\Scripts\activate<br />
 **~unutar (env) kucate komandu :<br />**
+pip install flask<br />
 flask --app flaskr run --debug<br />
