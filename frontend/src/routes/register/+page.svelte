@@ -15,13 +15,13 @@
     <h1>Please Register!</h1>
     <form>
         <label for="email" class="selfc">Email:</label>
-        <input type="text" id="email" class="selfc" bind:value={email} />
+        <input type="email" id="email" class="selfc" bind:value={email} required/>
 
         <label for="password" class="selfc" >Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={password} />
+        <input type="password" id="password" class="selfc" bind:value={password} required/>
 
         <label for="password" class="selfc" >Confirm Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={password} />
+        <input type="password" id="password" class="selfc" bind:value={password} required/>
 
         <button type="submit" class="selfc">Register</button>
     </form>
