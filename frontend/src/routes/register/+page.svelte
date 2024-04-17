@@ -1,6 +1,7 @@
 <script>
     let email = '';
     let password = '';
+    let confirmPassword = '';
     
 </script>
 
@@ -22,7 +23,7 @@
         <input type="password" id="password" class="selfc" bind:value={password} required/>
 
         <label for="password" class="selfc" >Confirm Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={password} required/>
+        <input type="password" id="password" class="selfc" bind:value={confirmPassword} required/>
 
         <button type="submit" class="selfc">Register</button>
     </form>
