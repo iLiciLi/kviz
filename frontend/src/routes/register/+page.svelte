@@ -1,6 +1,7 @@
 <script>
     let email = '';
     let password = '';
+    
 </script>
 
 <nav>
@@ -13,7 +14,7 @@
 
 <div style="display: flex; justify-content:center; flex-direction:column">
     <h1>Please Register!</h1>
-    <form>
+    <form id='registerForm'>
         <label for="email" class="selfc">Email:</label>
         <input type="email" id="email" class="selfc" bind:value={email} required/>
 
