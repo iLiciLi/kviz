@@ -1,6 +1,7 @@
 KOMANDE ZA POKRETANJE FRONTEND DELA :<br />
 ---
 cd frontend<br />
+npm install<br />
 npm run dev<br />
 
 KOMANDE ZA POKRETANJE BACKEND DELA :
