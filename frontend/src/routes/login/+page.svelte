@@ -1,16 +1,27 @@
 <script>
-    
+    let email = '';
+    let password = '';
 </script>
+
 <nav>
     <ul>
-      <li><a href="/">Home</a></li>
-      <li><a href="/login">Login</a></li>
-      <li><a href="/register">Register</a></li>
+        <li><a href="/">Home</a></li>
+        <li><a href="/login">Login</a></li>
+        <li><a href="/register">Register</a></li>
     </ul>
-</nav>
-<div style="display: flex; justify-content:center; flex-direction:column">
-    <h1>Welcome to Quiz!</h1>
+  </nav>
 
+<div style="display: flex; justify-content:center; flex-direction:column">
+    <h1>Please Log In.</h1>
+    <form>
+        <label for="email" class="selfc">Email:</label>
+        <input type="text" id="email" class="selfc" bind:value={email} />
+
+        <label for="password" class="selfc" >Password:</label>
+        <input type="password" id="password" class="selfc" bind:value={password} />
+
+        <button type="submit" class="selfc">Login</button>
+    </form>
 </div>
 <style>
     *
@@ -48,5 +59,13 @@
         color:black;
         text-decoration: none;
         font-weight: bold;
+    }
+    .selfc
+    {
+        align-self:center;
+    }
+    button
+    {
+        background-color: lightblue;
     }
 </style>
