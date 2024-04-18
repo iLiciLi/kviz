@@ -1,9 +1,35 @@
-<script>
+<script lang="ts">
     let email = '';
     let password = '';
     let confirmPassword = '';
     
+    async function submitForm() {
+        const formData = {
+            email,
+            password,
+            confirmPassword
+        };
+
+        try {
+            if (password === confirmPassword) {
+                const response = await fetch('http://localhost:5000/register', {
+                    method: 'POST',
+                    credentials: 'include',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify(formData)
+                });
+
+                const data = await response.json();
+                console.log(data); // Handle response from backend
+            }
+        } catch (error) {
+            console.error('Error:', error);
+        }
+    }
 </script>
+
 
 <nav>
     <ul>
@@ -15,17 +41,17 @@
 
 <div style="display: flex; justify-content:center; flex-direction:column">
     <h1>Please Register!</h1>
-    <form id='registerForm'>
+    <form id='registerForm' on:submit={submitForm}>
         <label for="email" class="selfc">Email:</label>
         <input type="email" id="email" class="selfc" bind:value={email} required/>
 
         <label for="password" class="selfc" >Password:</label>
         <input type="password" id="password" class="selfc" bind:value={password} required/>
 
-        <label for="password" class="selfc" >Confirm Password:</label>
+        <label for="confirmPassword" class="selfc" >Confirm Password:</label>
         <input type="password" id="password" class="selfc" bind:value={confirmPassword} required/>
 
-        <button type="submit" class="selfc">Register</button>
+        <button id='registerDugme' type="submit" class="selfc">Register</button>
     </form>
 </div>
 <style>
