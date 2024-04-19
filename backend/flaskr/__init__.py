@@ -29,6 +29,9 @@ def create_app(test_config=None):
     except OSError:
         pass
     
+    from . import db
+    db.init_app(app)
+    
     @app.route('/')
     def home():
         return 'OVO JE <h1>POCETNA STRANICA</h1>'
@@ -38,11 +41,7 @@ def create_app(test_config=None):
     def hello():
         return 'Hello, World!'
     
-
-    from . import db
-    db.init_app(app)
-    
-    @app.route('/register', methods=['POST'])
+    @app.route('/register', methods=['GET','POST'])
     @cross_origin(supports_credentials=True)
     def register():
         data = request.json
