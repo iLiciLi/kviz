@@ -6,6 +6,7 @@ from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for,jsonify,Response
 )
 from flask_cors import CORS,cross_origin
+from werkzeug.security import check_password_hash, generate_password_hash
 
 def create_app(test_config=None):
     # create and configure the app
@@ -65,7 +66,7 @@ def create_app(test_config=None):
         # ubacivanje usera u bazu
         db.execute(
             'INSERT INTO user (email, password) VALUES (?, ?)',
-            (email, password)
+            (email, generate_password_hash(password))
         )
         db.commit()
 

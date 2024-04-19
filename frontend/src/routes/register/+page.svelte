@@ -23,6 +23,7 @@
 
                 const data = await response.json();
                 console.log(data); // Handle response from backend
+                
             }
         } catch (error) {
             console.error('Error:', error);
