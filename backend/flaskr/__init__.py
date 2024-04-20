@@ -97,6 +97,7 @@ def create_app(test_config=None):
             if error is None:
                 session.clear()
                 session['user_id'] = user['id']
+                #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
                 return jsonify({'message': 'Login successful'}), 200
 
 
