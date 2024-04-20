@@ -72,9 +72,33 @@ def create_app(test_config=None):
 
         return jsonify({'message': 'Registration successful'}), 200
 
-    #@app.route('/login',methods=['POST'])
-    #def login():
-        #pass
+    @app.route('/login',methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
+    def login():
+        if request.method == 'POST':
+            data = request.json
+            email = data.get('email')
+            password = data.get('password')
+
+            db = get_db()
+            error = None
+
+            user = db.execute(
+                'SELECT * FROM user WHERE email = ?', (email,)
+            ).fetchone()
+
+            if user is None:
+                error = 'Incorrect email.'
+                return jsonify({'message': 'Incorrect email'}), 400
+            elif not check_password_hash(user['password'], password):
+                error = 'Incorrect password.'
+                return jsonify({'message': 'Incorrect password'}), 400
+
+            if error is None:
+                session.clear()
+                session['user_id'] = user['id']
+                return jsonify({'message': 'Login successful'}), 200
+
 
     #@app.before_request
     #def load_logged_in_user():

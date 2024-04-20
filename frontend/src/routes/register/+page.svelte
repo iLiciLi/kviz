@@ -2,7 +2,7 @@
     let email = '';
     let password = '';
     let confirmPassword = '';
-    
+    import { goto } from '$app/navigation';
     async function submitForm() {
         const formData = {
             email,
@@ -22,7 +22,11 @@
                 });
 
                 const data = await response.json();
-                console.log(data); // Handle response from backend
+                console.log(data);
+                if(data['message']==='Registration successful')
+                {
+                    goto('/')
+                }
                 
             }
         } catch (error) {
