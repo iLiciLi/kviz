@@ -4,7 +4,8 @@ DROP TABLE IF EXISTS pitanje;
 CREATE TABLE user (
   id INTEGER PRIMARY KEY AUTOINCREMENT,
   email TEXT UNIQUE NOT NULL,
-  password TEXT NOT NULL
+  password TEXT NOT NULL,
+  verifikacija TEXT NOT NULL
 );
 
 CREATE TABLE pitanje (

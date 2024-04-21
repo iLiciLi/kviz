@@ -65,8 +65,8 @@ def create_app(test_config=None):
 
         # ubacivanje usera u bazu
         db.execute(
-            'INSERT INTO user (email, password) VALUES (?, ?)',
-            (email, generate_password_hash(password))
+            'INSERT INTO user (email, password,verifikacija) VALUES (?, ?, ?)',
+            (email, generate_password_hash(password),'nije verifikovan')
         )
         db.commit()
 
