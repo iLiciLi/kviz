@@ -66,7 +66,7 @@ def create_app(test_config=None):
         # ubacivanje usera u bazu
         db.execute(
             'INSERT INTO user (email, password,verifikacija) VALUES (?, ?, ?)',
-            (email, generate_password_hash(password),'nije verifikovan')
+            (email, generate_password_hash(password),'false')
         )
         db.commit()
 
@@ -101,11 +101,11 @@ def create_app(test_config=None):
                 return jsonify({'message': 'Login successful'}), 200
 
 
-    #@app.before_request
-    #def load_logged_in_user():
-        #@app.route('/logout')
-        #def logout():
-            #pass
+    @app.before_request
+    def load_logged_in_user():
+        @app.route('/logout')
+        def logout():
+            pass
 
     
     return app
