@@ -101,11 +101,12 @@ def create_app(test_config=None):
                 return jsonify({'message': 'Login successful'}), 200
 
 
-    #@app.before_request
-    #def load_logged_in_user():
-        #@app.route('/logout')
-        #def logout():
-            #pass
+    @app.before_request
+    def load_logged_in_user():
+        @app.route('/logout')
+        def logout():
+            session.clear()  # Brisanje korisničke sesije
+            return redirect(url_for('home'))  # Redirekcija na početnu stranicu
 
     
     return app
