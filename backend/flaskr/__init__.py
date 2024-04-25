@@ -8,6 +8,8 @@ from flask import (
 from flask_cors import CORS,cross_origin
 from werkzeug.security import check_password_hash, generate_password_hash
 
+user = None
+
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
@@ -95,18 +97,34 @@ def create_app(test_config=None):
                 return jsonify({'message': 'Incorrect password'}), 400
 
             if error is None:
-                session.clear()
-                session['user_id'] = user['id']
+                userLogovan = db.execute(
+                'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
+                ('true',user['id'])
+                )
+                db.commit()
+                #session.clear()
+                #session['user_id'] = user['id']
                 #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
                 return jsonify({'message': 'Login successful'}), 200
 
-
-    @app.before_request
-    def load_logged_in_user():
-        @app.route('/logout')
-        def logout():
-            session.clear()  # Brisanje korisničke sesije
-            return redirect(url_for('home'))  # Redirekcija na početnu stranicu
+    
+    
+    @app.route('/ulogovan',methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
+    def ulogovan():
+        db = get_db()
+        jelUlogovan = db.execute(
+            'SELECT idLog FROM logovan WHERE trenutnaSesija = ?', ('true',)
+        ).fetchone()
+        if jelUlogovan is None:
+            return jsonify({'message': 'nije'}), 200
+        elif jelUlogovan is not None:
+            return jsonify({'message': 'jeste'}), 200
+    
+    @app.route('/logout')
+    def logout():
+        session.clear()  # Brisanje korisničke sesije
+        return redirect(url_for('home'))  # Redirekcija na početnu stranicu
 
     
     return app
