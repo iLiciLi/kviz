@@ -1,7 +1,13 @@
 <script lang="ts">
     let email = '';
     let password = '';
+    import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
+    initializeStores();
     import { goto } from '$app/navigation';
+    import { getToastStore } from '@skeletonlabs/skeleton';
+    import { Toast, type ToastSettings, type ToastStore } from '@skeletonlabs/skeleton';
+    const toastStore = getToastStore();
+
     async function submitFormLogin() {
         
 
@@ -28,9 +34,27 @@
                 goto('/register');
             }
             if(data['message']==='Login successful')
-                {
-                    goto('/')
-                }
+            {
+                const t: ToastSettings = {
+	                message: data['message'],
+                    background: 'green',
+                    //timeout:2000,
+                    //classes: 'border-4 border-purple-500',
+                    hideDismiss: true
+                };
+                toastStore.trigger(t);
+                goto('/')
+            }
+            else
+            {
+                const t: ToastSettings = {
+	                message: data['message'],
+                    background: 'yellow',
+                    timeout:2000,
+                    hideDismiss: true
+                };
+                toastStore.trigger(t);
+            }
             
         } catch (error) {
             console.error('Error:', error);
@@ -46,6 +70,7 @@
     </ul>
   </nav>
 
+
 <div style="display: flex; justify-content:center; flex-direction:column">
     <h1>Please Log In.</h1>
     <form on:submit={submitFormLogin}>
@@ -58,6 +83,7 @@
         <button type="submit" class="selfc">Login</button>
     </form>
 </div>
+<Toast></Toast>
 <style>
     *
     {

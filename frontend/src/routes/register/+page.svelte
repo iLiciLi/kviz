@@ -1,7 +1,15 @@
 <script lang="ts">
+    import { AppShell,initializeStores } from '@skeletonlabs/skeleton';
+    initializeStores();
+    import { getToastStore } from '@skeletonlabs/skeleton';
+    import {Toast} from '@skeletonlabs/skeleton';
+    import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
+    const toastStore = getToastStore();
+
     let email = '';
     let password = '';
     let confirmPassword = '';
+    
     import { goto } from '$app/navigation';
     async function submitForm() {
         const formData = {
@@ -25,7 +33,25 @@
                 console.log(data);
                 if(data['message']==='Registration successful')
                 {
+                    const t: ToastSettings = {
+	                    message: data['message'],
+                        background: 'green',
+                        //timeout:2000,
+                        hideDismiss: true
+
+                    };
+                    toastStore.trigger(t);
                     goto('/')
+                }
+                else
+                {
+                    const t: ToastSettings = {
+	                    message: data['message'],
+                        background: 'yellow',
+                        //timeout:2000,
+                        hideDismiss: true
+                    };
+                    toastStore.trigger(t);
                 }
                 
             }
@@ -34,6 +60,7 @@
         }
     }
 </script>
+
 
 
 <nav>
@@ -59,6 +86,11 @@
         <button id='registerDugme' type="submit" class="selfc">Register</button>
     </form>
 </div>
+
+<div class="bg-primary-500 text-secondary-500">
+    <Toast></Toast>
+</div>
+
 <style>
     *
     {

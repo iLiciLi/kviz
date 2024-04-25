@@ -1,5 +1,7 @@
 <script>
-    
+    import {Toast} from '@skeletonlabs/skeleton';
+    import { initializeStores } from '@skeletonlabs/skeleton';
+    initializeStores();
 </script>
 <nav>
     <ul>
@@ -12,6 +14,8 @@
     <h1>Welcome to Quiz!</h1>
 
 </div>
+
+<Toast></Toast>
 <style>
     *
     {
