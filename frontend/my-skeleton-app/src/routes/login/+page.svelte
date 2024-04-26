@@ -37,21 +37,20 @@
             {
                 const t: ToastSettings = {
 	                message: data['message'],
-                    background: 'green',
-                    //timeout:2000,
-                    //classes: 'border-4 border-purple-500',
-                    hideDismiss: true
+                    timeout:2000,
+                    background:'bg-primary-600',
+                    hideDismiss: true,
                 };
                 toastStore.trigger(t);
-                goto('/')
+                //goto('/')
             }
             else
             {
                 const t: ToastSettings = {
 	                message: data['message'],
-                    background: 'yellow',
                     timeout:2000,
-                    hideDismiss: true
+                    background: 'bg-error-700',
+                    hideDismiss: true,
                 };
                 toastStore.trigger(t);
             }
