@@ -1,6 +1,7 @@
 KOMANDE ZA POKRETANJE FRONTEND DELA :<br />
 ---
 cd frontend<br />
+cd my-skeleton-app<br />
 npm install<br />
 npm run dev<br />
 
