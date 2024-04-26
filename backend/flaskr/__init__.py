@@ -89,6 +89,10 @@ def create_app(test_config=None):
                 'SELECT * FROM user WHERE email = ?', (email,)
             ).fetchone()
 
+            jelIzlogovan = db.execute(
+            'SELECT idLog FROM logovan WHERE trenutnaSesija = ?', ('false',)
+            ).fetchone()
+
             if user is None:
                 error = 'Incorrect email.'
                 return jsonify({'message': 'Incorrect email'}), 400
@@ -97,15 +101,26 @@ def create_app(test_config=None):
                 return jsonify({'message': 'Incorrect password'}), 400
 
             if error is None:
-                userLogovan = db.execute(
-                'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
-                ('true',user['id'])
-                )
-                db.commit()
-                #session.clear()
-                #session['user_id'] = user['id']
-                #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
-                return jsonify({'message': 'Login successful'}), 200
+                if jelIzlogovan is None:
+                    userLogovan = db.execute(
+                    'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
+                    ('true',user['id'])
+                    )
+                    db.commit()
+                    #session.clear()
+                    #session['user_id'] = user['id']
+                    #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
+                    return jsonify({'message': 'Login successful'}), 200
+                elif jelIzlogovan is not None:
+                    db.execute(
+                        'UPDATE logovan SET trenutnaSesija = ? WHERE idSesije=?',
+                        ('true',user['id'])
+                    )
+                    db.commit()
+                    #session.clear()
+                    #session['user_id'] = user['id']
+                    #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
+                    return jsonify({'message': 'Login successful'}), 200
 
     
     
@@ -121,10 +136,22 @@ def create_app(test_config=None):
         elif jelUlogovan is not None:
             return jsonify({'message': 'jeste'}), 200
     
-    @app.route('/logout')
+    @app.route('/logout',methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
     def logout():
-        session.clear()  # Brisanje korisničke sesije
-        return redirect(url_for('home'))  # Redirekcija na početnu stranicu
+        db = get_db()
+        jelUlogovan = db.execute(
+            'SELECT idLog FROM logovan WHERE trenutnaSesija = ?', ('true',)
+        ).fetchone()
 
+        if jelUlogovan is None:
+            redirect(url_for('/ulogovan'))
+        elif jelUlogovan is not None:
+            db.execute(
+                'UPDATE logovan SET trenutnaSesija = ?',
+                ('false',)
+            )
+            db.commit()
+            return jsonify({'message': 'izlogovan'}), 200
     
     return app

@@ -41,7 +41,12 @@
 
                     };
                     toastStore.trigger(t);
-                    //goto('/')
+                    setTimeout(() => {
+                    if (data['message'] === 'Registration successful') 
+                    {
+                        goto('/');
+                        }
+                    }, 2500);
                 }
                 else
                 {
@@ -87,9 +92,8 @@
     </form>
 </div>
 
-<div class="bg-primary-500 text-secondary-500">
-    <Toast></Toast>
-</div>
+<Toast></Toast>
+
 
 <style>
     *

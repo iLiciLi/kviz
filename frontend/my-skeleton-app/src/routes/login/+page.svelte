@@ -1,6 +1,7 @@
 <script lang="ts">
     let email = '';
     let password = '';
+    let brPokusaja = 0;
     import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
     initializeStores();
     import { goto } from '$app/navigation';
@@ -29,10 +30,6 @@
 
             const data = await response.json();
             console.log(data); // Handle response from backend
-            if(data['message']==='Incorrect email')
-            {
-                goto('/register');
-            }
             if(data['message']==='Login successful')
             {
                 const t: ToastSettings = {
@@ -41,11 +38,19 @@
                     background:'bg-primary-600',
                     hideDismiss: true,
                 };
+                brPokusaja = 0;
                 toastStore.trigger(t);
-                //goto('/')
+                setTimeout(() => {
+                    if (data['message'] === 'Login successful') 
+                    {
+                        goto('/');
+                        }
+                    }, 2500);
+
             }
             else
             {
+                brPokusaja += 1;
                 const t: ToastSettings = {
 	                message: data['message'],
                     timeout:2000,
@@ -53,6 +58,14 @@
                     hideDismiss: true,
                 };
                 toastStore.trigger(t);
+                if(brPokusaja>=3)
+                {
+                    brPokusaja = 0;
+                    setTimeout(() => {
+                        goto('/register');
+                            
+                        }, 1500);
+                }
             }
             
         } catch (error) {
