@@ -9,6 +9,7 @@ from flask_cors import CORS,cross_origin
 from werkzeug.security import check_password_hash, generate_password_hash
 
 user = None
+jelUlogovan = None
 
 def create_app(test_config=None):
     # create and configure the app
@@ -68,7 +69,7 @@ def create_app(test_config=None):
         # ubacivanje usera u bazu
         db.execute(
             'INSERT INTO user (email, password,verifikacija) VALUES (?, ?, ?)',
-            (email, generate_password_hash(password),'nije verifikovan')
+            (email, generate_password_hash(password),'false')
         )
         db.commit()
 
@@ -89,9 +90,6 @@ def create_app(test_config=None):
                 'SELECT * FROM user WHERE email = ?', (email,)
             ).fetchone()
 
-            jelIzlogovan = db.execute(
-            'SELECT idLog FROM logovan WHERE trenutnaSesija = ?', ('false',)
-            ).fetchone()
 
             if user is None:
                 error = 'Incorrect email.'
@@ -101,26 +99,17 @@ def create_app(test_config=None):
                 return jsonify({'message': 'Incorrect password'}), 400
 
             if error is None:
-                if jelIzlogovan is None:
-                    userLogovan = db.execute(
-                    'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
-                    ('true',user['id'])
-                    )
-                    db.commit()
+                
+                userLogovan = db.execute(
+                'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
+                ('true',user['id'])
+                )
+                db.commit()
                     #session.clear()
                     #session['user_id'] = user['id']
                     #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
-                    return jsonify({'message': 'Login successful'}), 200
-                elif jelIzlogovan is not None:
-                    db.execute(
-                        'UPDATE logovan SET trenutnaSesija = ? WHERE idSesije=?',
-                        ('true',user['id'])
-                    )
-                    db.commit()
-                    #session.clear()
-                    #session['user_id'] = user['id']
-                    #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
-                    return jsonify({'message': 'Login successful'}), 200
+                return jsonify({'message': 'Login successful'}), 200
+                
 
     
     
