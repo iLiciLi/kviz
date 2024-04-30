@@ -8,7 +8,7 @@ from flask import (
 from flask_cors import CORS,cross_origin
 from werkzeug.security import check_password_hash, generate_password_hash
 
-user = None
+#user = None
 jelUlogovan = None
 
 def create_app(test_config=None):
@@ -67,13 +67,12 @@ def create_app(test_config=None):
             return jsonify({'message': 'Email already registered'}), 400
 
         # ubacivanje usera u bazu
-        db.execute(
+        user = db.execute(
             'INSERT INTO user (email, password,verifikacija) VALUES (?, ?, ?)',
             (email, generate_password_hash(password),'false')
         )
         db.commit()
-
-        return jsonify({'message': 'Registration successful'}), 200
+        return jsonify({'message': 'Registration successful','userAIDI':user.lastrowid}), 200
 
     @app.route('/login',methods=['GET','POST'])
     @cross_origin(supports_credentials=True)
@@ -91,25 +90,38 @@ def create_app(test_config=None):
             ).fetchone()
 
 
+
             if user is None:
                 error = 'Incorrect email.'
                 return jsonify({'message': 'Incorrect email'}), 400
             elif not check_password_hash(user['password'], password):
                 error = 'Incorrect password.'
                 return jsonify({'message': 'Incorrect password'}), 400
+            
 
             if error is None:
+                jelUlogovan = db.execute(
+            'SELECT idLog FROM logovan WHERE idSesije = ?', (user['id'],)
+        )   .fetchone()
                 
-                userLogovan = db.execute(
-                'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
-                ('true',user['id'])
-                )
-                db.commit()
-                    #session.clear()
-                    #session['user_id'] = user['id']
-                    #fali cuvanje sesije za user-a to jest da se zna da li je user logged in ili nije, posto i dalje moze da se loguje iako smo ulogovani
-                return jsonify({'message': 'Login successful'}), 200
-                
+                if jelUlogovan is None:
+                    userLogovan = db.execute(
+                    'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
+                    ('true',user['id'])
+                    )
+                    db.commit()
+                        
+                    return jsonify({'message': 'Login successful','userAIDI':userLogovan.lastrowid}), 200
+                elif jelUlogovan is not None:
+                    userLogovan = db.execute(
+                    'UPDATE logovan SET trenutnaSesija = ? WHERE idSesije=?',
+                    ('true',user['id'])
+                    )
+
+                    db.commit()
+                        
+                    return jsonify({'message': 'Login successful','userAIDI':userLogovan.lastrowid}), 200
+                    
 
     
     

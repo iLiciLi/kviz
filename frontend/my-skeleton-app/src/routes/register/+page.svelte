@@ -1,14 +1,22 @@
 <script lang="ts">
+    
     import { AppShell,initializeStores } from '@skeletonlabs/skeleton';
     initializeStores();
     import { getToastStore } from '@skeletonlabs/skeleton';
     import {Toast} from '@skeletonlabs/skeleton';
     import type { ToastSettings, ToastStore } from '@skeletonlabs/skeleton';
+    import {userID} from '$lib/stores';
+    import { onMount ,onDestroy} from 'svelte';
+
+    let isLoggedIn : String | null;
+    onMount(()=> isLoggedIn = document.cookie.split('=')[1])
+    
     const toastStore = getToastStore();
 
     let email = '';
     let password = '';
     let confirmPassword = '';
+
     
     import { goto } from '$app/navigation';
     async function submitForm() {
@@ -67,33 +75,37 @@
 </script>
 
 
+{#if isLoggedIn === 'false'}
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </nav>
 
-<nav>
-    <ul>
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1>Please Register!</h1>
+        <form id='registerForm' on:submit={submitForm}>
+            <label for="email" class="selfc">Email:</label>
+            <input type="email" id="email" class="selfc" bind:value={email} required/>
+
+            <label for="password" class="selfc" >Password:</label>
+            <input type="password" id="password" class="selfc" bind:value={password} required/>
+
+            <label for="confirmPassword" class="selfc" >Confirm Password:</label>
+            <input type="password" id="password" class="selfc" bind:value={confirmPassword} required/>
+
+            <button id='registerDugme' type="submit" class="selfc">Register</button>
+        </form>
+    </div>
+{:else}
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1>VEC SI ULOGOVAN, VRATI SE NA POCETNU</h1>
         <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
-</nav>
-
-<div style="display: flex; justify-content:center; flex-direction:column">
-    <h1>Please Register!</h1>
-    <form id='registerForm' on:submit={submitForm}>
-        <label for="email" class="selfc">Email:</label>
-        <input type="email" id="email" class="selfc" bind:value={email} required/>
-
-        <label for="password" class="selfc" >Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={password} required/>
-
-        <label for="confirmPassword" class="selfc" >Confirm Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={confirmPassword} required/>
-
-        <button id='registerDugme' type="submit" class="selfc">Register</button>
-    </form>
-</div>
-
+    </div>
+{/if}
 <Toast></Toast>
-
 
 <style>
     *

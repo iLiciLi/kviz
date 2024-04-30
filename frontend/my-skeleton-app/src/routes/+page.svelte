@@ -1,9 +1,12 @@
 <script lang="ts">
-    import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
+    import { AppShell, initializeStores, storeHighlightJs } from '@skeletonlabs/skeleton';
     initializeStores();
     import { goto } from '$app/navigation';
     import { getToastStore } from '@skeletonlabs/skeleton';
     import { Toast, type ToastSettings, type ToastStore } from '@skeletonlabs/skeleton';
+    import {userID} from '$lib/stores.js';
+    import { onMount,onDestroy } from 'svelte';
+
     const toastStore = getToastStore();
     let sakrij = false
     let logoutDugme = false
@@ -24,18 +27,20 @@
             {
                 sakrij = true;
                 logoutDugme = true;
+                document.cookie = 'isLoggedIn=true'
             }
             else
             {
                 sakrij = false;
                 logoutDugme = false;
+                document.cookie = 'isLoggedIn=false'
             }
             
         } catch (error) {
             console.error('Error:', error);
         }
     }
-    proveriLogin()
+    onMount(proveriLogin);
     async function logoutUser() {
         try {
             
@@ -53,6 +58,7 @@
             {
                 sakrij = false;
                 logoutDugme = false;
+                document.cookie = 'isLoggedIn=false'
                 goto('/')
                 const t: ToastSettings = {
 	                message: data['message'],
@@ -66,6 +72,7 @@
             {
                 sakrij = true;
                 logoutDugme = true;
+                document.cookie = 'isLoggedIn=true'
                 const t: ToastSettings = {
 	                message: 'Ulogovani ste',
                     timeout:2000,
@@ -79,9 +86,9 @@
             console.error('Error:', error);
         }
     }
+    
 
 </script>
-
 {#if sakrij}
     <nav>
         <ul>
@@ -98,6 +105,7 @@
     </ul>
 </nav>
 {/if}
+
 
 <div style="display: flex; justify-content:center; flex-direction:column">
     <h1>Welcome to Quiz!</h1>

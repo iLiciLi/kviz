@@ -1,4 +1,5 @@
 <script lang="ts">
+
     let email = '';
     let password = '';
     let brPokusaja = 0;
@@ -7,6 +8,14 @@
     import { goto } from '$app/navigation';
     import { getToastStore } from '@skeletonlabs/skeleton';
     import { Toast, type ToastSettings, type ToastStore } from '@skeletonlabs/skeleton';
+    import {userID} from '$lib/stores.js';
+    import { onMount,onDestroy } from 'svelte';
+    
+    let isLoggedIn : String | null;
+    onMount(()=> isLoggedIn = document.cookie.split('=')[1])
+
+    console.log('pokrenutaProvera');
+
     const toastStore = getToastStore();
 
     async function submitFormLogin() {
@@ -74,28 +83,37 @@
     }
 </script>
 
-<nav>
-    <ul>
+{#if isLoggedIn === 'false'}
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </nav>
+
+
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1>Please Log In.</h1>
+        <form on:submit={submitFormLogin}>
+            <label for="email" class="selfc">Email:</label>
+            <input type="email" id="email" class="selfc" bind:value={email} required/>
+
+            <label for="password" class="selfc" >Password:</label>
+            <input type="password" id="password" class="selfc" bind:value={password} required/>
+
+            <button type="submit" class="selfc">Login</button>
+        </form>
+    </div>
+
+{:else}
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1>VEC SI ULOGOVAN, VRATI SE NA POCETNU</h1>
         <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
-  </nav>
-
-
-<div style="display: flex; justify-content:center; flex-direction:column">
-    <h1>Please Log In.</h1>
-    <form on:submit={submitFormLogin}>
-        <label for="email" class="selfc">Email:</label>
-        <input type="email" id="email" class="selfc" bind:value={email} required/>
-
-        <label for="password" class="selfc" >Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={password} required/>
-
-        <button type="submit" class="selfc">Login</button>
-    </form>
-</div>
+    </div>
+{/if}
 <Toast></Toast>
+
 <style>
     *
     {
