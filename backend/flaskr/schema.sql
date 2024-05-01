@@ -16,3 +16,11 @@ CREATE TABLE pitanje (
   body TEXT NOT NULL,
   FOREIGN KEY (author_id) REFERENCES user (id)
 );
+
+CREATE TABLE logovan(
+
+  idLog INTEGER PRIMARY KEY AUTOINCREMENT,
+  trenutnaSesija TEXT NOT NULL,
+  idSesije INTEGER NOT NULL,
+  FOREIGN KEY (idSesije) REFERENCES user (id)
+);

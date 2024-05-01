@@ -1,11 +1,21 @@
 <script lang="ts">
+
     let email = '';
     let password = '';
+    let brPokusaja = 0;
     import { AppShell, initializeStores } from '@skeletonlabs/skeleton';
     initializeStores();
     import { goto } from '$app/navigation';
     import { getToastStore } from '@skeletonlabs/skeleton';
     import { Toast, type ToastSettings, type ToastStore } from '@skeletonlabs/skeleton';
+    import {userID} from '$lib/stores.js';
+    import { onMount,onDestroy } from 'svelte';
+    
+    let isLoggedIn : String | null;
+    onMount(()=> isLoggedIn = localStorage.getItem('isLoggedIn'))
+
+    console.log('pokrenutaProvera');
+
     const toastStore = getToastStore();
 
     async function submitFormLogin() {
@@ -29,31 +39,42 @@
 
             const data = await response.json();
             console.log(data); // Handle response from backend
-            if(data['message']==='Incorrect email')
-            {
-                goto('/register');
-            }
             if(data['message']==='Login successful')
             {
                 const t: ToastSettings = {
 	                message: data['message'],
-                    background: 'green',
-                    //timeout:2000,
-                    //classes: 'border-4 border-purple-500',
-                    hideDismiss: true
+                    timeout:2000,
+                    background:'bg-primary-600',
+                    hideDismiss: true,
                 };
+                brPokusaja = 0;
                 toastStore.trigger(t);
-                goto('/')
+                setTimeout(() => {
+                    if (data['message'] === 'Login successful') 
+                    {
+                        goto('/');
+                        }
+                    }, 2500);
+
             }
             else
             {
+                brPokusaja += 1;
                 const t: ToastSettings = {
 	                message: data['message'],
-                    background: 'yellow',
                     timeout:2000,
-                    hideDismiss: true
+                    background: 'bg-error-700',
+                    hideDismiss: true,
                 };
                 toastStore.trigger(t);
+                if(brPokusaja>=3)
+                {
+                    brPokusaja = 0;
+                    setTimeout(() => {
+                        goto('/register');
+                            
+                        }, 1500);
+                }
             }
             
         } catch (error) {
@@ -62,28 +83,37 @@
     }
 </script>
 
-<nav>
-    <ul>
+{#if isLoggedIn === 'false'}
+    <nav>
+        <ul>
+            <li><a href="/">Home</a></li>
+            <li><a href="/login">Login</a></li>
+            <li><a href="/register">Register</a></li>
+        </ul>
+    </nav>
+
+
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1>Please Log In.</h1>
+        <form on:submit={submitFormLogin}>
+            <label for="email" class="selfc">Email:</label>
+            <input type="email" id="email" class="selfc" bind:value={email} required/>
+
+            <label for="password" class="selfc" >Password:</label>
+            <input type="password" id="password" class="selfc" bind:value={password} required/>
+
+            <button type="submit" class="selfc">Login</button>
+        </form>
+    </div>
+
+{:else}
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1>VEC SI ULOGOVAN, VRATI SE NA POCETNU</h1>
         <li><a href="/">Home</a></li>
-        <li><a href="/login">Login</a></li>
-        <li><a href="/register">Register</a></li>
-    </ul>
-  </nav>
-
-
-<div style="display: flex; justify-content:center; flex-direction:column">
-    <h1>Please Log In.</h1>
-    <form on:submit={submitFormLogin}>
-        <label for="email" class="selfc">Email:</label>
-        <input type="email" id="email" class="selfc" bind:value={email} required/>
-
-        <label for="password" class="selfc" >Password:</label>
-        <input type="password" id="password" class="selfc" bind:value={password} required/>
-
-        <button type="submit" class="selfc">Login</button>
-    </form>
-</div>
+    </div>
+{/if}
 <Toast></Toast>
+
 <style>
     *
     {
