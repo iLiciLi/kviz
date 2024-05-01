@@ -12,7 +12,7 @@
     import { onMount,onDestroy } from 'svelte';
     
     let isLoggedIn : String | null;
-    onMount(()=> isLoggedIn = document.cookie.split('=')[1])
+    onMount(()=> isLoggedIn = localStorage.getItem('isLoggedIn'))
 
     console.log('pokrenutaProvera');
 

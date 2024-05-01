@@ -10,6 +10,7 @@
     const toastStore = getToastStore();
     let sakrij = false
     let logoutDugme = false
+    let isLoggedIn : String | null;
     async function proveriLogin() {
         try {
             
@@ -27,13 +28,13 @@
             {
                 sakrij = true;
                 logoutDugme = true;
-                document.cookie = 'isLoggedIn=true'
+                localStorage.setItem('isLoggedIn','true')
             }
             else
             {
                 sakrij = false;
                 logoutDugme = false;
-                document.cookie = 'isLoggedIn=false'
+                localStorage.setItem('isLoggedIn','false')
             }
             
         } catch (error) {
@@ -54,11 +55,11 @@
 
             const data = await response.json();
             console.log(data);
-            if(data['message']==='izlogovan')
+            if(data['message']==='izlogovan' || data['message']==='nije')
             {
                 sakrij = false;
                 logoutDugme = false;
-                document.cookie = 'isLoggedIn=false'
+                localStorage.setItem('isLoggedIn','false')
                 goto('/')
                 const t: ToastSettings = {
 	                message: data['message'],
@@ -72,7 +73,7 @@
             {
                 sakrij = true;
                 logoutDugme = true;
-                document.cookie = 'isLoggedIn=true'
+                localStorage.setItem('isLoggedIn','true')
                 const t: ToastSettings = {
 	                message: 'Ulogovani ste',
                     timeout:2000,
@@ -86,7 +87,7 @@
             console.error('Error:', error);
         }
     }
-    
+    onMount(()=> isLoggedIn = localStorage.getItem('isLoggedIn'))
 
 </script>
 {#if sakrij}

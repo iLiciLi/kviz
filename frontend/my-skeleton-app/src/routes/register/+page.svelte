@@ -9,7 +9,7 @@
     import { onMount ,onDestroy} from 'svelte';
 
     let isLoggedIn : String | null;
-    onMount(()=> isLoggedIn = document.cookie.split('=')[1])
+    onMount(()=> isLoggedIn = localStorage.getItem('isLoggedIn'))
     
     const toastStore = getToastStore();
 
@@ -41,6 +41,8 @@
                 console.log(data);
                 if(data['message']==='Registration successful')
                 {
+                    localStorage.setItem('isLoggedIn','true')
+                    localStorage.setItem('userID',data['userAIDI'])
                     const t: ToastSettings = {
 	                    message: data['message'],
                         classes: 'bg-primary-600',
@@ -52,7 +54,7 @@
                     setTimeout(() => {
                     if (data['message'] === 'Registration successful') 
                     {
-                        goto('/');
+                        goto('/verification');
                         }
                     }, 2500);
                 }

@@ -1,22 +1,38 @@
 import os
 
 from flask import Flask
+from email.message import EmailMessage
+
+import ssl
+import smtplib
+
+from dotenv import load_dotenv
 from flaskr.db import get_db
 from flask import (
     Blueprint, flash, g, redirect, render_template, request, session, url_for,jsonify,Response
 )
 from flask_cors import CORS,cross_origin
 from werkzeug.security import check_password_hash, generate_password_hash
+import random
 
-#user = None
+email_sender = 'kvizpzm@gmail.com'
+email_password = os.environ.get('SIFRAMEJL')
+email_reciever = ''
+subject = 'VERIFIKACIJA'
+body = """
+
+"""
+
+trenutniUserID = None
 jelUlogovan = None
+otpBr = 000000
 
 def create_app(test_config=None):
     # create and configure the app
     app = Flask(__name__)
     CORS(app, origins={'http://localhost:5173'}, supports_credentials=True)
     app.config.from_mapping(
-        SECRET_KEY='dev',
+        SECRET_KEY=os.environ.get('SECRET_KEY'),
         DATABASE=os.path.join(app.instance_path, 'flaskr.sqlite'),
     )
 
@@ -48,8 +64,10 @@ def create_app(test_config=None):
     @app.route('/register', methods=['GET','POST'])
     @cross_origin(supports_credentials=True)
     def register():
+        global trenutniUserID,email_reciever
         data = request.json
         email = data.get('email')
+        email_reciever = email
         password = data.get('password')
         confirmPassword = data.get('confirmPassword')
         
@@ -72,15 +90,18 @@ def create_app(test_config=None):
             (email, generate_password_hash(password),'false')
         )
         db.commit()
+        trenutniUserID = user.lastrowid
         return jsonify({'message': 'Registration successful','userAIDI':user.lastrowid}), 200
 
     @app.route('/login',methods=['GET','POST'])
     @cross_origin(supports_credentials=True)
     def login():
+        global email_reciever
         if request.method == 'POST':
             data = request.json
             email = data.get('email')
             password = data.get('password')
+            email_reciever = email
 
             db = get_db()
             error = None
@@ -88,7 +109,6 @@ def create_app(test_config=None):
             user = db.execute(
                 'SELECT * FROM user WHERE email = ?', (email,)
             ).fetchone()
-
 
 
             if user is None:
@@ -103,7 +123,7 @@ def create_app(test_config=None):
                 jelUlogovan = db.execute(
             'SELECT idLog FROM logovan WHERE idSesije = ?', (user['id'],)
         )   .fetchone()
-                
+
                 if jelUlogovan is None:
                     userLogovan = db.execute(
                     'INSERT INTO logovan (trenutnaSesija, idSesije) VALUES (?, ?)',
@@ -111,7 +131,7 @@ def create_app(test_config=None):
                     )
                     db.commit()
                         
-                    return jsonify({'message': 'Login successful','userAIDI':userLogovan.lastrowid}), 200
+                    return jsonify({'message': 'Login successful','userAIDI':user['id']}), 200
                 elif jelUlogovan is not None:
                     userLogovan = db.execute(
                     'UPDATE logovan SET trenutnaSesija = ? WHERE idSesije=?',
@@ -120,11 +140,9 @@ def create_app(test_config=None):
 
                     db.commit()
                         
-                    return jsonify({'message': 'Login successful','userAIDI':userLogovan.lastrowid}), 200
+                    return jsonify({'message': 'Login successful','userAIDI':user['id']}), 200
                     
 
-    
-    
     @app.route('/ulogovan',methods=['GET','POST'])
     @cross_origin(supports_credentials=True)
     def ulogovan():
@@ -146,7 +164,7 @@ def create_app(test_config=None):
         ).fetchone()
 
         if jelUlogovan is None:
-            redirect(url_for('/ulogovan'))
+            return jsonify({'message': 'nije'}), 200
         elif jelUlogovan is not None:
             db.execute(
                 'UPDATE logovan SET trenutnaSesija = ?',
@@ -154,5 +172,68 @@ def create_app(test_config=None):
             )
             db.commit()
             return jsonify({'message': 'izlogovan'}), 200
+
+    
+    @app.route('/saljiMail',methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
+    def saljiMail():
+        if request.method == 'POST':
+            global otpBr,body,email_sender,email_reciever,subject
+            otpBr = random.randint(000000,999999)
+            body = 'Tvoj verifikacioni OTP kod je : '+str(otpBr)
+            em = EmailMessage()
+            em['From'] = email_sender
+            em['To'] = email_reciever
+            em['subject'] = subject
+            em.set_content(body)
+            print(em.as_string())
+            context = ssl.create_default_context()
+            with smtplib.SMTP_SSL('smtp.gmail.com',465,context=context) as smtp:
+                smtp.login(email_sender,email_password)
+                smtp.sendmail(email_sender,email_reciever,em.as_string())
+            
+            return jsonify({'messageEM':'poslat mail'}),200
+        
+    @app.route('/proveriVerifikaciju',methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
+    def proveriVerifikaciju():
+        if request.method == 'POST':
+            data = request.json
+            userid = data.get('uID')
+            db = get_db()
+            jelVerifikovan = db.execute(
+                'SELECT * FROM user WHERE id=?',(userid)
+            ).fetchone()
+
+            if jelVerifikovan is None:
+                return jsonify({'messagePV':'nijeUlogovan'}),200
+
+            elif jelVerifikovan is not None:
+                if jelVerifikovan['verifikacija'] == 'false':
+                    return jsonify({'messagePV':'nijeVerifikovan'}),200
+                else:
+                    return jsonify({'messagePV':'jesteVerifikovan'}),200
+
+    @app.route('/verifikacija',methods=['GET','POST'])
+    @cross_origin(supports_credentials=True)
+    def verifikacija():
+        global otpBr
+        if request.method == 'POST':
+            data = request.json
+            otpBr1 = data.get('otpInput')
+            userid = data.get('uID')
+
+            db = get_db()
+            error = None
+
+            if str(otpBr) == otpBr1:
+                db.execute(
+                'UPDATE user SET verifikacija=? WHERE id=?',('true',userid)
+                )
+                db.commit()
+                return jsonify({'messageV':'verifikovan'}),200
+            else:
+                return jsonify({'messageV':'Pogresan OTP kod'}),400
+
     
     return app
