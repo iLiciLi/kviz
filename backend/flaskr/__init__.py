@@ -226,6 +226,7 @@ def create_app(test_config=None):
             db = get_db()
             error = None
 
+
             if str(otpBr) == otpBr1:
                 db.execute(
                 'UPDATE user SET verifikacija=? WHERE id=?',('true',userid)
@@ -234,6 +235,7 @@ def create_app(test_config=None):
                 return jsonify({'messageV':'verifikovan'}),200
             else:
                 return jsonify({'messageV':'Pogresan OTP kod'}),400
+
 
     
     return app
