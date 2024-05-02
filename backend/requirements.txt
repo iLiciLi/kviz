@@ -1,0 +1,12 @@
+pip
+Flask==3.0.3
+Flask-Cors
+python-dotenv>=1.0.1
+itsdangerous
+Werkzeug>=3.0.2
+setuptools>=40.8.0
+blinker
+click
+colorama
+Jinja2
+MarkupSafe
