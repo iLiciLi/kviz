@@ -1,5 +1,5 @@
 import { skeleton } from '@skeletonlabs/tw-plugin';
-import { Wintry } from './src/Wintry';
+import forms from '@tailwindcss/forms';
 
 const config = {
   darkMode: 'class',
@@ -27,16 +27,11 @@ const config = {
     skeleton({
       themes: {
         preset: [
-          {
-            name: 'skeleton',
-            enhancements: true,
-          },
-        ],
-        custom: [
-          Wintry,
+          {name: "skeleton",enhancements:true},{name: "modern",enhancements:true},{name: "wintry",enhancements:true},{name: "crimson",enhancements:true}
         ],
       },
     }),
+    forms,
   ],
 };
 
