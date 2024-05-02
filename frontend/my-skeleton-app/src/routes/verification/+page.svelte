@@ -143,27 +143,27 @@
 
 
 {#if sv === 'nijeVerifikovan'}
-    <div style="display: flex; justify-content:center; flex-direction:column">
-        <h1>VERIFIKACIONI MAIL JE POSLAT!</h1>
+    <div style="display: flex; justify-content:center; flex-direction:column" class="h2">
+        <h1 class="h1">VERIFIKACIJA!</h1>
         {#if mozeSlati === true}
             <form on:submit={verifikuj}>
-                <label for="vInput">OTP:</label>
-                <input id='vInput' type="text" bind:value={otpInput}>
-                <button type="submit">POTVRDI</button>
+                <label class="Label" for="vInput">OTP:</label>
+                <input class="Input" id='vInput' type="text" bind:value={otpInput}>
+                <button class="btn variant-filled" type="submit">POTVRDI</button>
             </form>
         {:else}
             <h2>SALJE SE MAIL...</h2>
         {/if}
     </div>
 {:else if sv === 'nijeLogovan'}
-    <div style="display: flex; justify-content:center; flex-direction:column">
+    <div style="display: flex; justify-content:center; flex-direction:column" class="h2">
         <h1>NISI ULOGOVAN, ULOGUJ SE DA BI MOGAO DA SE VERIFIKUJES</h1>
-        <a href="/login">ULOGUJ SE</a>
+        <a class="btn variant-filled" href="/login">ULOGUJ SE</a>
     </div>
 {:else}
-    <div style="display: flex; justify-content:center; flex-direction:column">
+    <div style="display: flex; justify-content:center; flex-direction:column" class="h2">
         <h1>VERIFIKOVAN SI</h1>
-        <a href="/">Home</a>
+        <a class="btn variant-filled" href="/">Home</a>
     </div>
 {/if}
 <Toast></Toast>
@@ -181,5 +181,9 @@
     {
         height: 100vh;
         background: linear-gradient(to right, #1b5780, #504c52);
+    }
+    .h1
+    {
+        margin-bottom: 5%;
     }
 </style>

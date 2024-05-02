@@ -14,6 +14,7 @@ from flask import (
 from flask_cors import CORS,cross_origin
 from werkzeug.security import check_password_hash, generate_password_hash
 import random
+import re
 
 email_sender = 'kvizpzm@gmail.com'
 email_password = os.environ.get('SIFRAMEJL')
@@ -26,6 +27,17 @@ body = """
 trenutniUserID = None
 jelUlogovan = None
 otpBr = 000000
+regex = r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,7}\b'
+
+def check(email):
+ 
+    # pass the regular expression
+    # and the string into the fullmatch() method
+    if(re.fullmatch(regex, email)):
+        return True
+ 
+    else:
+        return False
 
 def create_app(test_config=None):
     # create and configure the app
@@ -75,8 +87,10 @@ def create_app(test_config=None):
         # Da li se sifre podudaraju
         if password != confirmPassword:
             return jsonify({'message': 'Passwords do not match'}), 400
-
-        # Provera da li je user vec registrovan
+        
+        if check(email)==False:
+            return jsonify({'message': 'Unet email nije tacan'}), 400
+            # Provera da li je user vec registrovan
         db = get_db()
         user = db.execute(
             'SELECT id FROM user WHERE email = ?', (email,)
@@ -92,6 +106,7 @@ def create_app(test_config=None):
         db.commit()
         trenutniUserID = user.lastrowid
         return jsonify({'message': 'Registration successful','userAIDI':user.lastrowid}), 200
+        
 
     @app.route('/login',methods=['GET','POST'])
     @cross_origin(supports_credentials=True)

@@ -90,27 +90,30 @@
     onMount(()=> isLoggedIn = localStorage.getItem('isLoggedIn'))
 
 </script>
+
 {#if sakrij}
-    <nav>
+    <nav class="btn-group variant-ghost-secondary [&>*+*]:border-red-500">
         <ul>
         <li><a href="/">Home</a></li>
         <li><a id='logoutA' on:click={logoutUser} href="/">Logout</a></li>
         </ul>
     </nav>
+    <div style="display: flex; justify-content:center; flex-direction:column">
+        <h1 class="h1">Welcome to Quiz!</h1>
+    </div>    
 {:else}
-<nav>
+<nav class="btn-group variant-ghost-secondary [&>*+*]:border-red-500">
     <ul>
       <li><a href="/">Home</a></li>
       <li><a href="/login">Login</a></li>
       <li><a href="/register">Register</a></li>
     </ul>
 </nav>
-{/if}
-
-
 <div style="display: flex; justify-content:center; flex-direction:column">
-    <h1>Welcome to Quiz!</h1>
+    <h1 class="h1">QUIZ - Uloguj / Registruj se da bi pristupio kvizu</h1>
 </div>
+
+{/if}
 
 <Toast></Toast>
 
@@ -123,6 +126,7 @@
         align-items: center;
         min-height: 50%;
     }
+    
     :global(body)
     {
         height: 100vh;
@@ -130,6 +134,11 @@
     }
     nav
     {
+        display: flex;
+        position:sticky;
+        border-radius: 0%;
+        align-items: flex-end;
+        justify-content: end;
         padding: 10px;
         height:fit-content;
         min-height: 0%;
