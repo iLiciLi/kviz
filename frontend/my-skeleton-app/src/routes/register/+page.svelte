@@ -10,7 +10,8 @@
 
     let isLoggedIn : String | null;
     onMount(()=> isLoggedIn = localStorage.getItem('isLoggedIn'))
-    
+
+
     const toastStore = getToastStore();
 
     let email = '';
@@ -20,11 +21,20 @@
     
     import { goto } from '$app/navigation';
     async function submitForm() {
+        
+        // @ts-ignore
+        document.getElementById('email').setAttribute("required","true");
+        // @ts-ignore
+        document.getElementById('password').setAttribute("required","true");
+        // @ts-ignore
+        document.getElementById('confirmPassword').setAttribute("required","true");
+        
         const formData = {
             email,
             password,
             confirmPassword
         };
+
 
         try {
             if (password === confirmPassword) {
@@ -90,13 +100,13 @@
         <h1>Please Register!</h1>
         <form id='registerForm' on:submit={submitForm}>
             <label for="email" class="selfc">Email:</label>
-            <input type="email" id="email" class="selfc" bind:value={email} required/>
+            <input type="email" id="email" class="selfc" bind:value={email}/>
 
             <label for="password" class="selfc" >Password:</label>
-            <input type="password" id="password" class="selfc" bind:value={password} required/>
+            <input type="password" id="password" class="selfc" bind:value={password}/>
 
             <label for="confirmPassword" class="selfc" >Confirm Password:</label>
-            <input type="password" id="password" class="selfc" bind:value={confirmPassword} required/>
+            <input type="password" id="confirmPassword" class="selfc" bind:value={confirmPassword}/>
 
             <button id='registerDugme' type="submit" class="selfc">Register</button>
         </form>

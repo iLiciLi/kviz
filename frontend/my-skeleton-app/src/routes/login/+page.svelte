@@ -20,7 +20,11 @@
 
     async function submitFormLogin() {
         
-
+        // @ts-ignore
+        document.getElementById('email').setAttribute("required","true");
+        // @ts-ignore
+        document.getElementById('password').setAttribute("required","true");
+        
         const formData = {
             email,
             password
@@ -97,10 +101,10 @@
         <h1>Please Log In.</h1>
         <form on:submit={submitFormLogin}>
             <label for="email" class="selfc">Email:</label>
-            <input type="email" id="email" class="selfc" bind:value={email} required/>
+            <input type="email" id="email" class="selfc" bind:value={email}/>
 
             <label for="password" class="selfc" >Password:</label>
-            <input type="password" id="password" class="selfc" bind:value={password} required/>
+            <input type="password" id="password" class="selfc" bind:value={password}/>
 
             <button type="submit" class="selfc">Login</button>
         </form>
