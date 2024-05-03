@@ -148,7 +148,7 @@
         {#if mozeSlati === true}
             <form on:submit={verifikuj}>
                 <label class="Label" for="vInput">OTP:</label>
-                <input class="Input" id='vInput' type="text" bind:value={otpInput}>
+                <input class="Input text-secondary-700" id='vInput' type="text" bind:value={otpInput}>
                 <button class="btn variant-filled" type="submit">POTVRDI</button>
             </form>
         {:else}
