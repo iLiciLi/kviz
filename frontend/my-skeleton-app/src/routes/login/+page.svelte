@@ -63,6 +63,7 @@
                     setTimeout(() => {
                         if (data['message'] === 'Login successful') 
                         {
+                            localStorage.setItem('userID',data['userAIDI'])
                             goto('/');
                             }
                         }, 2500);
